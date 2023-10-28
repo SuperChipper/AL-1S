@@ -14,12 +14,14 @@ import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.PlainText;
 import net.mamoe.mirai.utils.ExternalResource;
 
-import java.io.IOException;
+import com.example.demo.Request.JSON_process;
 import java.util.regex.*;
 
 import java.io.File;
 import net.mamoe.mirai.message.data.MessageChain;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 
 @RobotListener
@@ -27,6 +29,7 @@ public class TestListener {
     private ChatGPT Chat=new ChatGPT();
     private final int maxTokenLength=30000;
     private static int tokenCount;
+    private JSON_process j = new JSON_process();
     @RobotListenerHandler
     public void LoginSuccessHandler(BotOnlineEvent event){
         System.out.print(event);
@@ -71,19 +74,14 @@ public class TestListener {
             }
             if (Pattern.matches("@"+bot.getId()+".*",message)){
                 String m=message.replaceAll("@"+bot.getId()+" ","");
-
-
                 if(tokenCount>maxTokenLength||tokenCount==0){
                     Chat.promtInit();
                 }
                 tokenCount+=m.length();
 
-                //ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\表情2.png"));
-                //Image image = ExternalResource.uploadAsImage(externalResource, group);
                 m=Chat.PromptGPT(m,false);
                 tokenCount+=m.length();
                 group.sendMessage(m);
-                //externalResource.close();
             }
             if (Pattern.matches(".*魔法.?",message)){
                 ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\l2d_small.png"));
@@ -100,10 +98,17 @@ public class TestListener {
                 group.sendMessage(ExternalResource.uploadAsImage(externalResource, group));
                 externalResource.close();
             }
-            if (Pattern.matches("不要卷啦.?",message)){
-                ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\别卷了.jpg"));
-                group.sendMessage(ExternalResource.uploadAsImage(externalResource, group));
-                externalResource.close();
+            if (Pattern.matches("不要卷啦.?",message)||Pattern.matches("别卷.+",message)){
+                if(Math.random()>0.5) {
+                    ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\别卷了.jpg"));
+                    group.sendMessage(ExternalResource.uploadAsImage(externalResource, group));
+                    externalResource.close();
+                }
+                else{
+                    ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\打人了.jpg"));
+                    group.sendMessage(ExternalResource.uploadAsImage(externalResource, group));
+                    externalResource.close();
+                }
             }
             if (Pattern.matches(".*大佬.?",message)){
                 ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\带带我.jpg"));
@@ -115,6 +120,10 @@ public class TestListener {
                 group.sendMessage(ExternalResource.uploadAsImage(externalResource, group));
                 externalResource.close();
             }
+            if (message.equals("资讯功能")) {
+                String groupId = Long.toString(group.getId());
+                j.toggleGroupFeature(groupId);
+            }
             //System.out.println("@"+bot.getId());
 
         }catch(Exception e){
@@ -125,5 +134,6 @@ public class TestListener {
 
 
 }
+
 
 

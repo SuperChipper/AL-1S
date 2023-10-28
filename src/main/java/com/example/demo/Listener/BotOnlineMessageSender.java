@@ -27,6 +27,7 @@ public class BotOnlineMessageSender implements ApplicationRunner {
             ContactList<Group> groups = bot.getGroups();
             ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\立绘.png"));
             for (Group group : groups) {
+                String id = Long.toString(group.getId());
                 Image image;
                 image = ExternalResource.uploadAsImage(externalResource,group);
                 //group.sendMessage(image.plus("HP回复完成！"));
