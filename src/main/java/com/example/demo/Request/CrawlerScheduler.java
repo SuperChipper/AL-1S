@@ -5,6 +5,13 @@ import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.contact.ContactList;
 import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.message.data.Image;
+import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
+import net.mamoe.mirai.utils.ExternalResource;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.core.ParameterizedTypeReference;
@@ -14,6 +21,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +34,7 @@ public class CrawlerScheduler {
     private final String PYTHON_SERVICE_URL = "http://localhost:5000/crawl";
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Scheduled(fixedRate = 10000) // 10 seconds
+    @Scheduled(fixedRate = 120000) // 10 seconds
     public void fetchDataFromPythonService() throws JSONException {
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 PYTHON_SERVICE_URL,
@@ -38,27 +47,67 @@ public class CrawlerScheduler {
         if((boolean)data.get("update")) {
             // Extract text data
             String textData = (String) data.get("text");
+
+            //System.out.println("Received text: " + textData);
+
             List<String> imagesStr = (List<String>) data.get("pictures");
-            System.out.println("Received text: " + textData);
-            for (String imageUrl : imagesStr) {
-                System.out.println("Received image URL: " + imageUrl);
-                // TODO: Process or save the image URLs as required
-            }
+
+
+
+
             ContactList<Group> groups=bot.getGroups();
             JSONObject g = j.readJsonFromFile("groups.json");
+
+
             for(Group group:groups){
                 try{
-                    g.getBoolean(Long.toString(group.getId()));
+
+                    if(g.getBoolean(Long.toString(group.getId()))){
+
+                        MessageChain messageChain = build_with_img(textData,imagesStr,group);  // 构建消息链
+                        group.sendMessage(messageChain);  // 发送包含文本和图片的消息链
+                    }
                 }
                 catch (Exception e){
-
+                    e.printStackTrace();
                 }
             }
-
         }
+
+
 
         // Extract and save image data
 
+    }
+    private MessageChain build_with_img(String text,List<String> imagesStr ,Group group){
+        MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
+        OkHttpClient client = new OkHttpClient();
+        messageChainBuilder.add(text);  // 添加文本数据到消息链
+        for (String imageUrl : imagesStr) {
+            //System.out.println("Received image URL: " + imageUrl);
+
+            Request request = new Request.Builder()
+                    .url(imageUrl)
+                    .build();
+
+
+            try (Response response1 = client.newCall(request).execute()) {
+
+                if (response1.isSuccessful()) {
+                    byte[] imageBytes = response1.body().bytes();
+                    ExternalResource externalResource = ExternalResource.create(imageBytes);
+                    Image image = group.uploadImage(externalResource);
+                    messageChainBuilder.add(image);  // 将图片添加到消息链中
+                    externalResource.close();  // 释放资源
+                } else {
+                    System.out.println("Failed to download image from URL: " + imageUrl);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("Error processing image URL: " + imageUrl);
+            }
+        }
+        return messageChainBuilder.build();
     }
 }
 

@@ -10,25 +10,31 @@ import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class JSON_process {
-    public void toggleGroupFeature(String groupId) throws JSONException {
+    public String toggleGroupFeature(String groupId) throws JSONException {
         JSONObject data = readJsonFromFile("groups.json");
         try{
             boolean send= data.getBoolean(groupId);
             if(send){
                 data.put(groupId,false);
+                saveJsonToFile("groups.json", data);
+                return "资讯功能关闭!";
             }
             else{
                 data.put(groupId,true);
+                saveJsonToFile("groups.json", data);
+                return "资讯功能开启!";
             }
         }
         catch (Exception e){
             System.out.println(groupId+" firstly initialize.");
             data.put(groupId,true);
         }
+        saveJsonToFile("groups.json", data);
 
 
         // Save the updated data to the file
-        saveJsonToFile("groups.json", data);
+
+        return "Sensei，出错了！";
     }
     public JSONObject readJsonFromFile(String filename) throws JSONException {
         try {

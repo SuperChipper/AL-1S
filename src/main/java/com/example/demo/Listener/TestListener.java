@@ -122,7 +122,7 @@ public class TestListener {
             }
             if (message.equals("资讯功能")) {
                 String groupId = Long.toString(group.getId());
-                j.toggleGroupFeature(groupId);
+                group.sendMessage(j.toggleGroupFeature(groupId));
             }
             //System.out.println("@"+bot.getId());
 
