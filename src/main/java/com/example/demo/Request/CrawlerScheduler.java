@@ -34,13 +34,17 @@ public class CrawlerScheduler {
     private final String PYTHON_SERVICE_URL = "http://localhost:5000/crawl";
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Scheduled(fixedRate = 120000) // 10 seconds
+    @Scheduled(fixedRate = 60000) // 240 miliseconds
     public void fetchDataFromPythonService() throws JSONException {
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 PYTHON_SERVICE_URL,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<Map<String, Object>>() {}
+
+
+
+
         );
 
         Map<String, Object> data = response.getBody();
@@ -66,16 +70,14 @@ public class CrawlerScheduler {
 
                         MessageChain messageChain = build_with_img(textData,imagesStr,group);  // 构建消息链
                         group.sendMessage(messageChain);  // 发送包含文本和图片的消息链
+
                     }
                 }
                 catch (Exception e){
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
             }
         }
-
-
-
         // Extract and save image data
 
     }
