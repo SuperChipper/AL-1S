@@ -32,5 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 *.json
+<<<<<<< HEAD
 *.secrets
 robot-data/
+=======
+*.yaml
+>>>>>>> 9618f177c500d1af793bc97c95b8b58d571fdefe
