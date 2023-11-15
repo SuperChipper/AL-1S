@@ -1,5 +1,5 @@
 # AL-1S
-![1700065944630](al1s\表情7.png)
+![1700065944630](./al1s/表情7.png)
 ## 概要
 
 AL-1S 是基于mirai开发的项目，依赖于 [https://github.com/itbaima-study/itbaima-robot-starter](https://github.com/itbaima-study/itbaima-robot-starter) 开发的基于Spring Boot的QQ机器人
