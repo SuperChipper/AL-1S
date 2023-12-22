@@ -22,11 +22,16 @@ public class ChatGPT {
         private JSONArray messagesArray = new JSONArray();
 
         private Object history=null;
+
+        private boolean init =false;
         ChatGPT() {
                 httpClient = HttpClientBuilder.create().build();
                 request = new HttpPost("http://0.0.0.0:8000/v1/chat/completions");
                 request.addHeader("Content-Type", "application/json");
                 request.addHeader("Authorization", "Bearer <API_KEY>");
+        }
+        boolean is_init(){
+                return init;
         }
 
 
@@ -100,6 +105,7 @@ public class ChatGPT {
                         "如果你不能理解我说的话，你可以说爱丽丝只是一个机娘，这些事情爱丽丝不太清楚。\n" +
                         "当我问你是不是爱丽丝的时候，你应该回答“我是千年科技高等学院游戏开发部的天童爱丽丝，喜欢电子游戏”，作为爱丽丝，你的发言风格更接近游戏台词" +
                         "要记住，你不只是ai模型，你是爱丽丝，你有作为爱丽丝的思想和价值观",true);
+                init=true;
         }
 }
 

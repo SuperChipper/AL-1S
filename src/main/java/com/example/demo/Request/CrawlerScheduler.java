@@ -31,10 +31,10 @@ public class CrawlerScheduler {
     @Resource
     private Bot bot;
     private JSON_process j = new JSON_process();
-    private final String PYTHON_SERVICE_URL = "http://localhost:5000/crawl";
+    private final String PYTHON_SERVICE_URL = "http://localhost:8081/crawl";
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Scheduled(fixedRate = 60000) // 240 miliseconds
+    @Scheduled(fixedRate = 60000) // 60 seconds
     public void fetchDataFromPythonService() throws JSONException {
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 PYTHON_SERVICE_URL,

@@ -74,13 +74,12 @@ public class TestListener {
             }
             if (Pattern.matches("@"+bot.getId()+".*",message)){
                 String m=message.replaceAll("@"+bot.getId()+" ","");
-                if(tokenCount>maxTokenLength||tokenCount==0){
+                if(!Chat.is_init()){
                     Chat.promtInit();
                 }
-                tokenCount+=m.length();
 
                 m=Chat.PromptGPT(m,false);
-                tokenCount+=m.length();
+
                 group.sendMessage(m);
             }
             if (Pattern.matches(".*魔法.?",message)){
@@ -124,12 +123,20 @@ public class TestListener {
                 String groupId = Long.toString(group.getId());
                 group.sendMessage(j.toggleGroupFeature(groupId));
             }
+            if(message.equals("help")){
+                group.sendMessage("爱丽丝的小贴士：\n" +
+                        "@我 + 想说的内容可以与我聊天哦\n" +
+                        "但是Sensei，爱丽丝没有记忆，所以请一次把话讲完哦。\n" +
+                        "发送\"资讯功能\"可以获取碧蓝档案资讯站最新消息\n" +
+                        "不要忘了打总力战哦，Sensei");
+            }
             //System.out.println("@"+bot.getId());
 
         }catch(Exception e){
             e.printStackTrace();
         }
     }
+
 
 
 

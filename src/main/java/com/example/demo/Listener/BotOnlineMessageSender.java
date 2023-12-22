@@ -29,7 +29,7 @@ public class BotOnlineMessageSender implements ApplicationRunner {
             for (Group group : groups) {
                 Image image;
                 image = ExternalResource.uploadAsImage(externalResource,group);
-                group.sendMessage(image.plus("HP回复完成！"));
+                //group.sendMessage(image.plus("HP回复完成！"));
 
             }
             externalResource.close();
