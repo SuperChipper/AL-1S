@@ -1,8 +1,8 @@
 # AL-1S
-![1700065944630](al1s\表情7.png)
+![1700065944630](./al1s/表情7.png)
 ## 概要
 
-AL-1S 是基于mirai开发的项目，依赖于 [https://github.com/itbaima-study/itbaima-robot-starter](https://github.com/itbaima-study/itbaima-robot-starter) 开发的基于Spring Boot的QQ机器人
+AL-1S 是基于mirai开发的项目，依赖于 [https://github.com/itbaima-study/itbaima-robot-starter](https://github.com/itbaima-study/itbaima-robot-starter) 开发的基于Spring Boot服务的QQ机器人
 
 同时使用清华大学开源的[ChatGLM3](https://github.com/SuperChipper/ChatGLM3)实现了实时对话功能
 
@@ -12,7 +12,7 @@ AL-1S 是基于mirai开发的项目，依赖于 [https://github.com/itbaima-stud
 
 ### 设备需求
 
-如果想完整加载体验ChatGLM的对话功能，需要16G以上的显存来保证正常运行。
+如果想完整加载体验ChatGLM的对话功能，需要16G以上的显存来保证正常运行。（当然也可以自行修改源文件中ChatGPT.java的请求格式和地址来直接使用ChatGPT）
 
 ### 安装
 在`src\main\resources`目录下application.yaml中添加
