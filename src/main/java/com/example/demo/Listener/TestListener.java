@@ -72,7 +72,8 @@ public class TestListener {
                 group.sendMessage(image.plus("メイド勇者です！"));
                 externalResource.close();
             }
-            if (Pattern.matches("@"+bot.getId()+".*",message)){
+            if (Pattern.matches(".*"+bot.getId()+".*",message)){
+                //String s=".*"+bot.getId()+".*";
                 String m=message.replaceAll("@"+bot.getId()+" ","");
                 if(!Chat.is_init()){
                     Chat.promtInit();

@@ -26,11 +26,14 @@ public class BotOnlineMessageSender implements ApplicationRunner {
 
             ContactList<Group> groups = bot.getGroups();
             ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\立绘.png"));
-            for (Group group : groups) {
-                Image image;
-                image = ExternalResource.uploadAsImage(externalResource,group);
-                //group.sendMessage(image.plus("HP回复完成！"));
+            boolean send =false;
+            if(send) {
+                for (Group group : groups) {
+                    Image image;
+                    image = ExternalResource.uploadAsImage(externalResource, group);
+                    group.sendMessage(image.plus("HP回复完成！"));
 
+                }
             }
             externalResource.close();
 
