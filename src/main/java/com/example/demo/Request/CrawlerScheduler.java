@@ -2,7 +2,7 @@ package com.example.demo.Request;
 
 import jakarta.annotation.Resource;
 import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.contact.Contact;
+
 import net.mamoe.mirai.contact.ContactList;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.message.data.Image;
@@ -21,7 +21,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;

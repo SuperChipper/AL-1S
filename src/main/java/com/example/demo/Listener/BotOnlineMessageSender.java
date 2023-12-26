@@ -1,7 +1,7 @@
 package com.example.demo.Listener;
 
 import jakarta.annotation.Resource;
-import net.itbaima.robot.service.RobotService;
+
 import net.mamoe.mirai.Bot;
 import java.io.File;
 
