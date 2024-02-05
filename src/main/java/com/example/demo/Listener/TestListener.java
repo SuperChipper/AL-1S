@@ -46,9 +46,12 @@ public class TestListener {
     @RobotListenerHandler
     public void GroupMessageHandler(GroupMessageEvent event){
         try {
+
             Bot bot = event.getBot();
 
             String message = event.getMessage().contentToString();
+            message = message.replaceAll("\n","");
+
             Contact group = event.getGroup();
             if(message.equals("爱丽丝")||Pattern.matches("邦邦咔邦.?",message)){
 

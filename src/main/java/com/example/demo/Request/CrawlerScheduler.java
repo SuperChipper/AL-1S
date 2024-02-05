@@ -34,7 +34,7 @@ public class CrawlerScheduler {
     private final String PYTHON_SERVICE_URL = "http://localhost:8081/crawl";
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Scheduled(fixedRate = 60000) // 60 seconds
+    @Scheduled(fixedRate = 600000) // 600 seconds
     public void fetchDataFromPythonService() throws JSONException {
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 PYTHON_SERVICE_URL,
