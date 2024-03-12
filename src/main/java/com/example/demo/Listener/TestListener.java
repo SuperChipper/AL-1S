@@ -60,16 +60,36 @@ public class TestListener {
                 group.sendMessage(image.plus(new PlainText("邦邦咔邦！")));
                 externalResource.close();
             }
-            if (Pattern.matches(".*啥比.?",message)||Pattern.matches(".*傻逼.*",message)||Pattern.matches(".*笨蛋.*",message)){
-                ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\表情8.png"));
+            else if(message.equals("操所有人")||Pattern.matches("全部.?飞",message)){
+
+                ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\草飞.gif"));
                 Image image = ExternalResource.uploadAsImage(externalResource, group);
                 group.sendMessage(image);
                 externalResource.close();
             }
-            if (Pattern.matches(".*妹抖",message)||Pattern.matches(".*女仆.*",message)){
+            else if (Pattern.matches(".*啥比.?",message)||Pattern.matches(".*傻逼.*",message)||Pattern.matches(".*笨蛋.*",message)){
+
+                if(Math.random()>0.5) {
+                    ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\表情8.png"));
+                    group.sendMessage(ExternalResource.uploadAsImage(externalResource, group));
+                    externalResource.close();
+                }
+                else{
+                    ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\挨骂.jpg"));
+                    group.sendMessage(ExternalResource.uploadAsImage(externalResource, group));
+                    externalResource.close();
+                }
+            }
+            else if (Pattern.matches(".*妹抖",message)||Pattern.matches(".*女仆.*",message)){
                 ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\表情7.png"));
                 Image image = ExternalResource.uploadAsImage(externalResource, group);
                 group.sendMessage(image.plus("メイド勇者です！"));
+                externalResource.close();
+            }
+            else if (Pattern.matches("悲",message)||Pattern.matches(".*落泪",message)){
+                ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\做不到.jpg"));
+                Image image = ExternalResource.uploadAsImage(externalResource, group);
+                group.sendMessage(image);
                 externalResource.close();
             }
             if (Pattern.matches(".*"+bot.getId()+".*",message)){
