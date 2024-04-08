@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -34,7 +35,7 @@ public class CrawlerScheduler {
     private final String PYTHON_SERVICE_URL = "http://localhost:8081/crawl";
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Scheduled(fixedRate = 600000) // 600 seconds
+    @Scheduled(fixedRate = 300000) // 300 seconds
     public void fetchDataFromPythonService() throws JSONException {
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 PYTHON_SERVICE_URL,
@@ -47,34 +48,36 @@ public class CrawlerScheduler {
 
         );
 
-        Map<String, Object> data = response.getBody();
-        if((boolean)data.get("update")) {
-            // Extract text data
-            String textData = (String) data.get("text");
+        var data = response.getBody();
+        if (data != null) {
+            ArrayList<Map<String,Object>> dataarr= (ArrayList<Map<String, Object>>) data.get("top");
+            for(Map<String,Object> d:dataarr) {
+                if((boolean)d.get("update")) {
+                    // Extract text data
+                    String textData = (String) d.get("text");
 
-            //System.out.println("Received text: " + textData);
+                    //System.out.println("Received text: " + textData);
 
-            List<String> imagesStr = (List<String>) data.get("pictures");
+                    List<String> imagesStr = (List<String>) d.get("pictures");
 
+                    ContactList<Group> groups=bot.getGroups();
+                    JSONObject g = j.readJsonFromFile("groups.json");
 
+                    Vector<byte[]> images = image_from_url(imagesStr);
+                    for(Group group:groups){
+                        try{
 
+                            if(g.getBoolean(Long.toString(group.getId()))){
 
-            ContactList<Group> groups=bot.getGroups();
-            JSONObject g = j.readJsonFromFile("groups.json");
+                                MessageChain messageChain = build_with_img(textData,images,group);  // 构建消息链
+                                group.sendMessage(messageChain);  // 发送包含文本和图片的消息链
 
-            Vector<byte[]> images = image_from_url(imagesStr);
-            for(Group group:groups){
-                try{
-
-                    if(g.getBoolean(Long.toString(group.getId()))){
-
-                        MessageChain messageChain = build_with_img(textData,images,group);  // 构建消息链
-                        group.sendMessage(messageChain);  // 发送包含文本和图片的消息链
-
+                            }
+                        }
+                        catch (Exception e){
+                            //e.printStackTrace();
+                        }
                     }
-                }
-                catch (Exception e){
-                    //e.printStackTrace();
                 }
             }
         }
