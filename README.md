@@ -47,7 +47,7 @@ https://github.com/itbaima-study/itbaima-robot-starter/wiki
 
 ## 更新日志
 
-
+08/04/2024:增加了对蔚蓝档案国服b站的资讯动态爬取
 
 ## License
 本项目同样基于GPL3.0开源
