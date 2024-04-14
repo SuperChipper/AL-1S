@@ -65,7 +65,7 @@ public class ChatGPT {
                         messagesArray.put(message);
                 else
                         messagesArray.remove(messagesArray.length()-1);
-                return message.getString("content").substring(1);
+                return message.getString("content");
 
         }
         public void promtInit() throws JSONException, IOException {

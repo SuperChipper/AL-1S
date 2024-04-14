@@ -92,7 +92,7 @@ public class TestListener {
                 group.sendMessage(image);
                 externalResource.close();
             }
-            if (Pattern.matches(".*"+bot.getId()+".*",message)){
+            if ((Math.random()>0.9)||Pattern.matches(".*"+bot.getId()+".*",message)){
                 //String s=".*"+bot.getId()+".*";
                 String m=message.replaceAll("@"+bot.getId()+" ","");
                 if(!Chat.is_init()){
@@ -103,11 +103,7 @@ public class TestListener {
 
                 group.sendMessage(m);
             }
-            if (Pattern.matches(".*魔法.?",message)){
-                ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\l2d_small.png"));
-                group.sendMessage(ExternalResource.uploadAsImage(externalResource, group).plus("爱丽丝不觉得基沃托斯没有魔法"));
-                externalResource.close();
-            }
+
             if (Pattern.matches(".*启动.?",message)){
                 ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\启动.png"));
                 group.sendMessage(ExternalResource.uploadAsImage(externalResource, group));
