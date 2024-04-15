@@ -19,14 +19,19 @@ import java.util.regex.*;
 
 import java.io.File;
 
+import com.example.demo.Listener.ZhipuApi;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 @RobotListener
 public class TestListener {
     private ChatGPT Chat=new ChatGPT();
+    boolean openai_api=false;
     private final int maxTokenLength=30000;
     private static int tokenCount;
     private JSON_process j = new JSON_process();
+
+
     @RobotListenerHandler
     public void LoginSuccessHandler(BotOnlineEvent event){
         System.out.print(event);
@@ -60,7 +65,7 @@ public class TestListener {
                 group.sendMessage(image.plus(new PlainText("邦邦咔邦！")));
                 externalResource.close();
             }
-            else if(message.equals("操所有人")||Pattern.matches("全部.?飞",message)){
+            else if(message.equals("操所有人")||Pattern.matches("全部.?飞",message)||Pattern.matches("日",message)){
 
                 ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\草飞.gif"));
                 Image image = ExternalResource.uploadAsImage(externalResource, group);
@@ -94,14 +99,23 @@ public class TestListener {
             }
             if ((Math.random()>0.9)||Pattern.matches(".*"+bot.getId()+".*",message)){
                 //String s=".*"+bot.getId()+".*";
-                String m=message.replaceAll("@"+bot.getId()+" ","");
-                if(!Chat.is_init()){
-                    Chat.promtInit();
+                String m = message.replaceAll("@" + bot.getId() + " ", "");
+                if(openai_api)
+                {
+
+                    if (!Chat.is_init()) {
+                        Chat.promtInit();
+                    }
+
+                    m = Chat.PromptGPT(m, false);
+
+                    group.sendMessage(m);
                 }
+                else{
 
-                m=Chat.PromptGPT(m,false);
-
-                group.sendMessage(m);
+                    m = ZhipuApi.messageChat(m);
+                    group.sendMessage(m);
+                }
             }
 
             if (Pattern.matches(".*启动.?",message)){
