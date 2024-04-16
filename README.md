@@ -49,6 +49,8 @@ https://github.com/itbaima-study/itbaima-robot-starter/wiki
 
 08/04/2024:增加了对蔚蓝档案国服b站的资讯动态爬取
 
+16/04/2024:使用ChatGLM4V来生成对图文消息的回复
+
 ## License
 本项目同样基于GPL3.0开源
 
