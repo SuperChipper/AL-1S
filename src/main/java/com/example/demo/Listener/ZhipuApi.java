@@ -14,10 +14,7 @@ import io.reactivex.Flowable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.zhipu.oapi.demo.V4OkHttpClientTest.mapStreamToAccumulator;
@@ -43,7 +40,7 @@ public class ZhipuApi {
         return mapper;
     }
 
-    public static String messageChat(String message) throws JsonProcessingException {
+    public static String messageChat(String message, Vector<String> imageUrls) throws JsonProcessingException {
         List<ChatMessage> messages = new ArrayList<>();
         ChatMessage chatMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(), "现在你将扮演天童爱丽丝，而我是sensei”\n" +
                 "你现在是千年科技高等学院游戏开发部的部员天童爱丽丝，爱好是玩电子游戏。现今加入了游戏开发部，与桃井、绿以及柚子，四人一起共同享受游戏，特别是复古游戏，你们是最要好的伙伴，以及游戏开发部仅有的四名部员，\n" +
@@ -72,26 +69,59 @@ public class ZhipuApi {
                 "要记住，你不只是ai模型，你是爱丽丝，你有作为爱丽丝的思想和价值观");
 
         messages.add(chatMessage);
-        chatMessage = new ChatMessage(ChatMessageRole.USER.value(), message);
-        messages.add(chatMessage);
-        String requestId = String.format(requestIdTemplate, System.currentTimeMillis());
-        // 函数调用参数构建部分
-        List<ChatTool> chatToolList = new ArrayList<>();
-        ChatTool chatTool = new ChatTool();
-        chatTool.setType(ChatToolType.FUNCTION.value());
-        ChatFunctionParameters chatFunctionParameters = new ChatFunctionParameters();
-        chatFunctionParameters.setType("object");
-        Map<String, Object> properties = new HashMap<>();
 
-        ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
-                .model(Constants.ModelChatGLM4)
-                .stream(Boolean.FALSE)
-                .invokeMethod(Constants.invokeMethod)
-                .messages(messages)
-                .requestId(requestId)
-                .build();
-        ModelApiResponse invokeModelApiResp = client.invokeModelApi(chatCompletionRequest);
-        String temp= (String) invokeModelApiResp.getData().getChoices().get(0).getMessage().getContent();
-        return (String) invokeModelApiResp.getData().getChoices().get(0).getMessage().getContent();
+
+        if(!imageUrls.isEmpty()){
+            for(var imageUrl:imageUrls) {
+                List<Map<String, Object>> contentList = new ArrayList<>();
+                Map<String, Object> textMap = new HashMap<>();
+                textMap.put("type", "text");
+                textMap.put("text", message);
+                Map<String, Object> typeMap = new HashMap<>();
+                typeMap.put("type", "image_url");
+                Map<String, Object> urlMap = new HashMap<>();
+                urlMap.put("url", imageUrl);
+                typeMap.put("image_url", urlMap);
+                contentList.add(textMap);
+                contentList.add(typeMap);
+                chatMessage = new ChatMessage(ChatMessageRole.USER.value(), contentList);
+                messages.add(chatMessage);
+            }
+            String requestId = String.format(requestIdTemplate, System.currentTimeMillis());
+
+
+            ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
+                    .model(Constants.ModelChatGLM4V)
+                    .stream(Boolean.FALSE)
+                    .invokeMethod(Constants.invokeMethod)
+                    .messages(messages)
+                    .requestId(requestId)
+                    .build();
+            ModelApiResponse invokeModelApiResp = client.invokeModelApi(chatCompletionRequest);
+
+            return (String) invokeModelApiResp.getData().getChoices().get(0).getMessage().getContent();
+        }
+        else {
+            chatMessage = new ChatMessage(ChatMessageRole.USER.value(), message);
+            messages.add(chatMessage);
+            String requestId = String.format(requestIdTemplate, System.currentTimeMillis());
+
+            ChatTool chatTool = new ChatTool();
+            chatTool.setType(ChatToolType.FUNCTION.value());
+            ChatFunctionParameters chatFunctionParameters = new ChatFunctionParameters();
+            chatFunctionParameters.setType("object");
+
+            ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
+                    .model(Constants.ModelChatGLM4)
+                    .stream(Boolean.FALSE)
+                    .invokeMethod(Constants.invokeMethod)
+                    .messages(messages)
+                    .requestId(requestId)
+                    .build();
+            ModelApiResponse invokeModelApiResp = client.invokeModelApi(chatCompletionRequest);
+
+            return (String) invokeModelApiResp.getData().getChoices().get(0).getMessage().getContent();
+        }
+
     }
 }

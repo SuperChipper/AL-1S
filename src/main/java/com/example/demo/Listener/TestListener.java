@@ -1,5 +1,6 @@
 package com.example.demo.Listener;
 
+import lombok.val;
 import net.itbaima.robot.event.RobotListener;
 
 import net.itbaima.robot.event.RobotListenerHandler;
@@ -15,11 +16,15 @@ import net.mamoe.mirai.message.data.PlainText;
 import net.mamoe.mirai.utils.ExternalResource;
 
 import com.example.demo.Request.JSON_process;
+
+import java.util.Vector;
 import java.util.regex.*;
 
 import java.io.File;
 
 import com.example.demo.Listener.ZhipuApi;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -30,6 +35,16 @@ public class TestListener {
     private final int maxTokenLength=30000;
     private static int tokenCount;
     private JSON_process j = new JSON_process();
+
+    JSONObject g;
+
+    {
+        try {
+            g = j.readJsonFromFile("groups.json");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     @RobotListenerHandler
@@ -55,6 +70,7 @@ public class TestListener {
             Bot bot = event.getBot();
 
             String message = event.getMessage().contentToString();
+            //event.getMessage()
             message = message.replaceAll("\n","");
 
             Contact group = event.getGroup();
@@ -97,23 +113,28 @@ public class TestListener {
                 group.sendMessage(image);
                 externalResource.close();
             }
-            if ((Math.random()>0.9)||Pattern.matches(".*"+bot.getId()+".*",message)){
+            if ((Math.random()>0.95)||Pattern.matches(".*"+bot.getId()+".*",message)){
                 //String s=".*"+bot.getId()+".*";
                 String m = message.replaceAll("@" + bot.getId() + " ", "");
+                //m=m.replaceAll("(\\[图片])|(\\[动画表情])","");
                 if(openai_api)
                 {
-
                     if (!Chat.is_init()) {
                         Chat.promtInit();
                     }
-
                     m = Chat.PromptGPT(m, false);
-
                     group.sendMessage(m);
                 }
                 else{
-
-                    m = ZhipuApi.messageChat(m);
+                    //Image.queryUrl()
+                    var chain=event.getMessage();
+                    Vector<String> ImageUrls=new Vector<>();
+                    for(var element:chain){
+                        if(element instanceof Image){
+                            ImageUrls.add(Image.queryUrl((Image) element));
+                        }
+                    }
+                    m = ZhipuApi.messageChat(m,ImageUrls);
                     group.sendMessage(m);
                 }
             }
