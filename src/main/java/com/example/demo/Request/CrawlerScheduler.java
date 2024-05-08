@@ -42,10 +42,6 @@ public class CrawlerScheduler {
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<Map<String, Object>>() {}
-
-
-
-
         );
 
         var data = response.getBody();

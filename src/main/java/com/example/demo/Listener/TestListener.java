@@ -113,7 +113,7 @@ public class TestListener {
                 group.sendMessage(image);
                 externalResource.close();
             }
-            if ((Math.random()>0.95)||Pattern.matches(".*"+bot.getId()+".*",message)){
+            if ((Math.random()>0.99)||Pattern.matches(".*"+bot.getId()+".*",message)){
                 //String s=".*"+bot.getId()+".*";
                 String m = message.replaceAll("@" + bot.getId() + " ", "");
                 //m=m.replaceAll("(\\[图片])|(\\[动画表情])","");
