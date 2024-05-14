@@ -4,7 +4,11 @@
 
 AL-1S 是基于mirai开发的项目，依赖于 [https://github.com/itbaima-study/itbaima-robot-starter](https://github.com/itbaima-study/itbaima-robot-starter) 开发的基于Spring Boot服务的QQ机器人
 
-同时使用清华大学开源的[ChatGLM3](https://github.com/SuperChipper/ChatGLM3)实现了实时对话功能
+使用清华大学开源的[ChatGLM3](https://github.com/SuperChipper/ChatGLM3)实现了实时对话功能，同时也可以选择使用openai提供的服务（需要自行提供apikey）（该功能以[openai_api](src/main/java/com/example/demo/Listener/ChatGPT.java)实现）
+
+使用智谱API实现了对qq图片的实时交互（在[ZhipuApi](src/main/java/com/example/demo/Listener/ZhipuApi.java)中实现）
+
+可以在运行时选择使用的交互方式
 
 [Mirai 项目地址](https://github.com/mamoe/mirai)
 
@@ -42,8 +46,11 @@ itbaima:
 
 具体部署教程:
 https://github.com/itbaima-study/itbaima-robot-starter/wiki
-
-
+### 智谱对话功能使用
+需要在工程根目录创建一个`api.json` 格式为
+```json
+{"api_key": "你的智谱api_key"}
+```
 
 ## 更新日志
 
