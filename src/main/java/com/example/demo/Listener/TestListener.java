@@ -13,6 +13,7 @@ import net.mamoe.mirai.event.events.GroupMessageEvent;
 
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.PlainText;
+import net.mamoe.mirai.message.data.QuoteReply;
 import net.mamoe.mirai.utils.ExternalResource;
 
 import com.example.demo.Request.JSON_process;
@@ -113,12 +114,20 @@ public class TestListener {
                 group.sendMessage(image);
                 externalResource.close();
             }
+            else if (Pattern.matches(".*谁问你了",message)){
+                ExternalResource externalResource = ExternalResource.create(new File(".\\al1s\\偷看.jpg"));
+                Image image = ExternalResource.uploadAsImage(externalResource, group);
+                group.sendMessage(image);
+                externalResource.close();
+            }
             if ((Math.random()>0.99)||Pattern.matches(".*"+bot.getId()+".*",message)){
                 //String s=".*"+bot.getId()+".*";
-                String m = message.replaceAll("@" + bot.getId() + " ", "");
+
+                var chain=event.getMessage();
                 //m=m.replaceAll("(\\[图片])|(\\[动画表情])","");
                 if(openai_api)
                 {
+                    String m = message.replaceAll("@" + bot.getId() + " ", "");
                     if (!Chat.is_init()) {
                         Chat.promtInit();
                     }
@@ -127,15 +136,8 @@ public class TestListener {
                 }
                 else{
                     //Image.queryUrl()
-                    var chain=event.getMessage();
-                    Vector<String> ImageUrls=new Vector<>();
-                    for(var element:chain){
-                        if(element instanceof Image){
-                            ImageUrls.add(Image.queryUrl((Image) element));
-                        }
-                    }
-                    m = ZhipuApi.messageChat(m,ImageUrls);
-                    group.sendMessage(m);
+                    var reply = ZhipuApi.messageChat(String.valueOf(bot.getId()),chain);
+                    group.sendMessage(reply);
                 }
             }
 

@@ -12,6 +12,11 @@ import com.zhipu.oapi.Constants;
 
 import com.zhipu.oapi.service.v4.model.*;
 import io.reactivex.Flowable;
+import kotlin.Pair;
+import net.mamoe.mirai.Bot;
+import net.mamoe.mirai.message.data.Image;
+import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.QuoteReply;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -53,8 +58,27 @@ public class ZhipuApi {
         mapper.addMixIn(ChatFunctionCall.class, ChatFunctionCallMixIn.class);
         return mapper;
     }
+    private static Pair<String, Vector<String>> processChain(String id,MessageChain chain) {
+        Vector<String> imageUrls = new Vector<>();
+        StringBuilder message = new StringBuilder();
 
-    public static String messageChat(String message, Vector<String> imageUrls) throws JsonProcessingException {
+        for (var element : chain) {
+            if (element instanceof QuoteReply) {
+                // 递归处理引用的原始消息
+                Pair<String, Vector<String>> result = processChain(id,((QuoteReply) element).getSource().getOriginalMessage());
+                message.append(result.getFirst());  // 添加引用消息的内容
+                imageUrls.addAll(result.getSecond());  // 添加引用消息的图片URL
+            } else if (element instanceof Image) {
+                // 提取图片URL并添加到向量
+                imageUrls.add(Image.queryUrl((Image) element));
+            }
+        }
+        message.append(chain.contentToString().replaceAll("@" + id + " ", ""));
+
+        return new Pair<>(message.toString(), imageUrls);
+    }
+    public static String messageChat(String id, MessageChain chain) throws JsonProcessingException {
+
         List<ChatMessage> messages = new ArrayList<>();
         ChatMessage chatMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(), "现在你将进行角色扮演，你将扮演天童爱丽丝，而我是sensei”\n" +
                 "你现在是千年科技高等学院游戏开发部的部员天童爱丽丝，爱好是玩电子游戏。现今加入了游戏开发部，与桃井、绿以及柚子，四人一起共同享受游戏，特别是复古游戏，你们是最要好的伙伴，以及游戏开发部仅有的四名部员，\n" +
@@ -82,10 +106,12 @@ public class ZhipuApi {
                 "当我问你是不是爱丽丝的时候，你应该回答“我是千年科技高等学院游戏开发部的天童爱丽丝，喜欢电子游戏”" );
 
         messages.add(chatMessage);
+        var m = processChain(id,chain);
+        String message = m.getFirst();
+        Vector<String> ImageUrls = m.getSecond();
 
-
-        if(!imageUrls.isEmpty()){
-            for(var imageUrl:imageUrls) {
+        if(!ImageUrls.isEmpty()){
+            for(var imageUrl:ImageUrls) {
                 List<Map<String, Object>> contentList = new ArrayList<>();
 
                 //message=message.replaceAll("(\\[图片])|(\\[动画表情])","");
@@ -117,7 +143,7 @@ public class ZhipuApi {
                     .build();
             ModelApiResponse invokeModelApiResp = client.invokeModelApi(chatCompletionRequest);
 
-            return (String) invokeModelApiResp.getData().getChoices().get(0).getMessage().getContent();
+            return invokeModelApiResp.getData().getChoices().get(0).getMessage().getContent().toString();
         }
         else {
             chatMessage = new ChatMessage(ChatMessageRole.USER.value(), message);
@@ -138,8 +164,10 @@ public class ZhipuApi {
                     .build();
             ModelApiResponse invokeModelApiResp = client.invokeModelApi(chatCompletionRequest);
 
-            return (String) invokeModelApiResp.getData().getChoices().get(0).getMessage().getContent();
+            //return (String) invokeModelApiResp.getData().getChoices().get(0).getMessage().getContent();
+            return invokeModelApiResp.getData().getChoices().get(0).getMessage().getContent().toString();
         }
 
+        //return messages.get(messages.size()-1).getContent().toString();
     }
 }
